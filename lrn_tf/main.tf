@@ -13,3 +13,4 @@ variable "stu_marks" {
     s3 = 23
   }
 }
+# getting error as plug in issue need to look
