@@ -1,6 +1,6 @@
 variable "myvar" {
-  default = [aws_instance.instance.private_ip]
+  default = aws_instance.instance.private_ip
 }
 output "myop" {
-  value = "myvar.aws_instance.instance.private_ip
+  value = myvar.aws_instance.instance.private_ip
 }
