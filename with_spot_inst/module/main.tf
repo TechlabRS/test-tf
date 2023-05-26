@@ -1,6 +1,6 @@
-resource "aws_instance" "instance" {
+resource "aws_spot_instance_request" "instance" {
   ami                    = data.aws_ami.centos.image_id
-  aws_spot_instance_request = var.instance_type
+  instance_type = var.instance_type
   vpc_security_group_ids = [data.aws_security_group.allow-all.id]
   iam_instance_profile   = aws_iam_instance_profile.instance_profile.name
   tags = {
@@ -9,9 +9,9 @@ resource "aws_instance" "instance" {
 }
 
 resource "null_resource" "provisioner" {
-  depends_on = [aws_instance.instance, aws_route53_record.records]
+  depends_on = [aws_spot_instance_request.instance, aws_route53_record.records]
   triggers = {
-    private_ip = aws_instance.instance.private_ip
+    private_ip = aws_spot_instance_request.instance.private_ip
   }
   provisioner "remote-exec" {
 
@@ -19,7 +19,7 @@ resource "null_resource" "provisioner" {
       type     = "ssh"
       user     = "centos"
       password = "DevOps321"
-      host     = aws_instance.instance.private_ip
+      host     = aws_spot_instance_request.instance.private_ip
     }
 
     inline = var.app_type == "db" ? local.db_commands : local.app_commands
@@ -32,7 +32,7 @@ resource "aws_route53_record" "records" {
   name    = "${var.component_name}-dev.uknowme.tech"
   type    = "A"
   ttl     = 30
-  records = [aws_instance.instance.private_ip]
+  records = [aws_spot_instance_request.instance.private_ip]
 }
 
 resource "aws_iam_role" "role" {
