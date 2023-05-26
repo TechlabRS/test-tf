@@ -1,5 +1,5 @@
 variable "env" {}
-variable "instance_type" {}
+variable "aws_spot_instance_request" {}
 variable "component_name" {}
 variable "password" {}
 variable "provisioner" {
